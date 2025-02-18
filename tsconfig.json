@@ -1,3 +1,26 @@
+// {
+//   "compilerOptions": {
+//     "target": "ESNext",
+//     "module": "CommonJS",
+//     "moduleResolution": "node",
+//     "esModuleInterop": true,
+//     "skipLibCheck": true,
+//     "forceConsistentCasingInFileNames": true,
+//     "strict": true,
+//     "outDir": "./dist",
+//     "baseUrl": "./",
+//     "paths": {
+//       "@prisma/client": ["node_modules/@prisma/client"]
+//     }
+//   },
+//   "include": [
+//     "src/**/*",
+//     "prisma/**/*"
+//   ],
+//   "exclude": ["node_modules"]
+// }
+
+
 {
   "compilerOptions": {
     "outDir": "./dist",
