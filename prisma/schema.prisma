@@ -1,0 +1,266 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userId   String @id @default(uuid()) // 사용자 고유 ID
+  email    String @unique // 사용자 이메일
+  nickname String // 사용자 닉네임
+  name     String // 사용자 이름
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
+  updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
+
+
+  code     String? // 사용자 코드 (선택 사항)
+  settings Json // 사용자 설정 (JSON 형식으로 저장)
+
+  role Role 
+
+  // 관계
+  organizations    UserToOrganization[] // 사용자가 속한 조직 목록
+  classes          ClassToUser[] // 사용자가 속한 클래스 목록
+  relations          UserRelation[] @relation("UserRelationUser") // 사용자 관계 목록 //부모
+  targetRelations          UserRelation[] @relation("UserRelationTargetUser") // 사용자 관계 목록 //자녀
+}
+
+enum Role {
+STUDENT_CHILD //어린이 학생 회원
+STUDENT //만 14세 이상
+TEACHER
+ADMIN
+PARENT
+}
+
+enum BoardPermission {
+OWNER //클래스 오너
+TEACHER 
+STUDENT
+PARENT
+}
+enum OrganizationType {
+KINDERGARDEN
+ELEMENTARY
+MIDDLE
+HIGH
+INSTITUTE //학원 (교과,진학관련/어학원/예능학원/기타) 세부항목 필요할지?
+}
+
+
+model UserRelation {
+  userRelationId String @id @default(uuid()) // 사용자 관계 ID
+  userId         String // 사용자 ID (주체)
+  targetUserId   String // 대상 사용자 ID
+  relationType   UserRelationType // 관계 유형 (예: 부모-자식)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
+  updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
+  status    UserRelationStatus
+
+  user       User @relation(name: "UserRelationUser",fields: [userId], references: [userId]) // 관계 주체 사용자
+  targetUser User @relation(name: "UserRelationTargetUser",fields: [targetUserId], references: [userId]) // 관계 대상 사용자
+}
+
+enum UserRelationStatus {
+REQUESTED
+ACCEPTED
+}
+
+enum UserRelationType {
+PARENT_CHILD //user parent ,target 유아, 초등
+PARENT_TEEN //user parent, target 중, 고등학교
+//팀장-팀원 등...
+}
+
+
+
+model Organization {
+  organizationId String           @id @default(uuid()) // 조직 고유 ID
+  name           String // 조직 이름
+  code           String // 조직 코드
+  autoApprove    Boolean          @default(false) // 자동 승인 여부
+  visible        Boolean          @default(true) // 조직 표시 여부
+  type           OrganizationType 
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
+  updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
+  active    Boolean  @default(true) // 활성 상태 여부
+  
+
+  profile                Json? // 조직 프로필 정보
+  owner                  String //조직 생성자 ID
+
+  classes                Class[] // 조직에 속한 클래스 목록
+  userOrganizations      UserToOrganization[] // 사용자와 조직의 관계
+
+
+}
+
+model UserToOrganization {
+  userOrganizationId String @id @default(uuid()) // 사용자-조직 관계 ID
+  userId             String // 사용자 ID
+  user               User   @relation(fields: [userId], references: [userId]) // 사용자 관계
+
+  organizationId String // 조직 ID
+  organization   Organization @relation(fields: [organizationId], references: [organizationId]) // 조직 관계
+
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
+  updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
+}
+
+
+model OrganizationSchedule {
+  OrganizationScheduleId String   @id @default(uuid())
+  isAllDay    Boolean
+  startAt    DateTime       //ex start_at
+  endAt      DateTime      //ex end_at
+  title       String       //ex name
+  organizationId   String     //조직 아이디
+}
+
+model Class {
+  classId        String       @id @default(uuid()) // 클래스 고유 ID
+  organizationId String // 조직 ID
+  organization   Organization @relation(fields: [organizationId], references: [organizationId]) // 조직 관계
+
+
+  title       String // 클래스 제목
+  description String? // 클래스 설명
+  visible     Boolean @default(true) // 클래스 표시 여부
+  autoApprove Boolean @default(false) // 자동 승인 여부
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
+  updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
+  
+  ownerId    String //생성자 아이디
+  classUsers ClassToUser[] // 클래스에 속한 사용자 목록
+
+
+}
+
+model ClassToUser {
+  classUserId String @id @default(uuid()) // 클래스-사용자 관계 ID
+  classId     String // 클래스 ID
+  class       Class  @relation(fields: [classId], references: [classId]) // 클래스 관계
+
+  userId String // 사용자 ID
+  user   User   @relation(fields: [userId], references: [userId]) // 사용자 관계
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
+  updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
+  active    Boolean  @default(true) // 승인여부 추후 필요 가능성
+}
+
+model Board {
+  boardId String @id @default(uuid()) // 게시판 고유 ID
+  classId String // 클래스 ID
+
+
+  title       String // 게시판 제목
+  description String? // 게시판 설명
+  permissions BoardPermission[] // 게시판 접근 권한 정보 (JSON 형식으로 저장)
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
+  updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
+
+  posts ClassPost[] // 게시판에 작성된 게시물 목록
+}
+
+model ClassPost {
+  postId  String @id @default(uuid()) // 게시물 고유 ID
+  boardId String // 게시판 ID
+  board   Board  @relation(fields: [boardId], references: [boardId]) // 게시판과의 관계
+
+  title   String // 게시물 제목
+  content String // 게시물 내용
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
+  updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
+
+
+  writerId String // 작성자 ID
+
+  comments     ClassPostComment[] // 게시물 댓글 목록
+
+  classId String
+}
+
+model ClassPostComment {
+  commentId String    @id @default(uuid()) // 댓글 고유 ID
+  postId    String // 게시물 ID
+  post      ClassPost @relation(fields: [postId], references: [postId]) // 게시물과의 관계
+
+  content String // 댓글 내용
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
+  updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
+
+
+  writerId String // 작성자 ID
+
+}
+
+model OrganizationPost {
+  postId         String       @id @default(uuid()) // 게시물 고유 ID
+  organizationId String // 조직 ID
+
+
+  title   String // 게시물 제목
+  content String // 게시물 내용
+
+
+  createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
+  updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
+
+  writerId String // 작성자 ID
+
+}
+
+model SlotConfig {
+  slotConfigId String @id @default(uuid())// 
+  counselorId String // 상담자 ID
+  startTime DateTime // 시작 시간
+  endTime   DateTime // 종료 시간
+  recurring   Int   @default(1) // 요일 반복 기간 설정
+  TimeSlots TimeSlot[] 
+}
+
+
+model TimeSlot {
+  requestId String @id @default(uuid()) // 요청 ID
+  slotConfigId String //시간 설정 ID
+  slotConfig SlotConfig @relation(fields: [slotConfigId], references: [slotConfigId])
+  startTime DateTime // 슬롯 시작 시간
+  endTime   DateTime // 슬롯 종료 시간
+
+  counselorId String // 상담자 ID
+  clientId  String // 내담자 ID
+
+  status    SlotRequestStatus  // 요청 상태
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @default(now())
+}
+
+enum SlotRequestStatus {
+  CLOSED //요청 거부중 상태
+  PENDING // 대기중
+  APPROVED // 상담자가 요청을 승인한 상태
+  DECLINED // 상담자가 요청을 거절한 상태
+  CANCELED // 내담자가 요청을 취소한 상태
+  COMPLETED // 상담 완료 상태
+}
+
+// 
