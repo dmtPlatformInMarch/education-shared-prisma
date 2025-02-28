@@ -22,7 +22,7 @@ model User {
   createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
   updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
 
-  code     String? // 사용자 코드 (선택 사항)
+  code     String?  @unique// 사용자 코드 (선택 사항)
   settings Json // 사용자 설정 (JSON 형식으로 저장)
 
   role Role
