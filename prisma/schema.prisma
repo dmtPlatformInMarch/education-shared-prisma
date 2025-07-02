@@ -147,7 +147,7 @@ model ClassToUser {
   class       Class  @relation(fields: [classId], references: [classId]) // 클래스 관계
 
   userId String // 사용자 ID
-  user   User   @relation(fields: [userId], references: [userId]) // 사용자 관계
+  user   User   @relation(fields: [userId], references: [mainUserId]) // 사용자 관계
 
   createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
   updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
