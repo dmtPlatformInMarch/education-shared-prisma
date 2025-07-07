@@ -139,6 +139,7 @@ model Class {
 
   ownerId    String //생성자 아이디
   classUsers ClassToUser[] // 클래스에 속한 사용자 목록
+  boards     Board[] // 클래스에 속한 게시판 목록
 }
 
 model ClassToUser {
@@ -155,9 +156,9 @@ model ClassToUser {
 }
 
 model Board {
-  boardId String @id @default(uuid()) // 게시판 고유 ID
-  classId String // 클래스 ID
-
+  boardId     String            @id @default(uuid()) // 게시판 고유 ID
+  classId     String // 클래스 ID
+  class       Class             @relation(fields: [classId], references: [classId]) // 클래스와의 관계
   title       String // 게시판 제목
   description String? // 게시판 설명
   permissions BoardPermission[] // 게시판 접근 권한 정보 (JSON 형식으로 저장)
