@@ -33,6 +33,9 @@ model User {
   classes         ClassToUser[] // 사용자가 속한 클래스 목록
   relations       UserRelation[]       @relation("UserRelationUser") // 사용자 관계 목록 //부모
   targetRelations UserRelation[]       @relation("UserRelationTargetUser") // 사용자 관계 목록 //자녀
+  posts           ClassPost[] 
+  postComments ClassPostComment[] // 게시물 댓글 목록
+  organizationPosts OrganizationPost[] // 조직 게시물 목록
 }
 
 enum Role {
@@ -181,6 +184,7 @@ model ClassPost {
   updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
 
   writerId String // 작성자 ID
+  writer   User   @relation(fields: [writerId], references: [mainUserId]) // 작성자와의 관계
 
   comments ClassPostComment[] // 게시물 댓글 목록
 
@@ -198,6 +202,7 @@ model ClassPostComment {
   updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
 
   writerId String // 작성자 ID
+  writer   User   @relation(fields: [writerId], references: [mainUserId]) // 작성자와의 관계
 }
 
 model OrganizationPost {
@@ -211,6 +216,7 @@ model OrganizationPost {
   updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
 
   writerId String // 작성자 ID
+  writer   User   @relation(fields: [writerId], references: [mainUserId]) // 작성자와의 관계
 }
 
 model SlotConfig {
