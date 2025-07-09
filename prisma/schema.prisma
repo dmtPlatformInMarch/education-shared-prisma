@@ -36,6 +36,7 @@ model User {
   posts           ClassPost[] 
   postComments ClassPostComment[] // 게시물 댓글 목록
   organizationPosts OrganizationPost[] // 조직 게시물 목록
+  boards         Board[] // 사용자가 작성한 게시판 목록
 }
 
 enum Role {
@@ -169,6 +170,8 @@ model Board {
   createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
   updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
 
+  ownerId String // 게시판 소유자 ID
+  owner   User   @relation(fields: [ownerId], references: [mainUserId ]) 
   posts ClassPost[] // 게시판에 작성된 게시물 목록
 }
 
