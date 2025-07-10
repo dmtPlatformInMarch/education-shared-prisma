@@ -29,14 +29,15 @@ model User {
   role Role
 
   // 관계
-  organizations   UserToOrganization[] // 사용자가 속한 조직 목록
-  classes         ClassToUser[] // 사용자가 속한 클래스 목록
-  relations       UserRelation[]       @relation("UserRelationUser") // 사용자 관계 목록 //부모
-  targetRelations UserRelation[]       @relation("UserRelationTargetUser") // 사용자 관계 목록 //자녀
-  posts           ClassPost[] 
-  postComments ClassPostComment[] // 게시물 댓글 목록
+  organizations     UserToOrganization[] // 사용자가 속한 조직 목록
+  classes           ClassToUser[] // 사용자가 속한 클래스 목록
+  relations         UserRelation[]       @relation("UserRelationUser") // 사용자 관계 목록 //부모
+  targetRelations   UserRelation[]       @relation("UserRelationTargetUser") // 사용자 관계 목록 //자녀
+  posts             ClassPost[]
+  postComments      ClassPostComment[] // 게시물 댓글 목록
   organizationPosts OrganizationPost[] // 조직 게시물 목록
-  boards         Board[] // 사용자가 작성한 게시판 목록
+  boards            Board[] // 사용자가 작성한 게시판 목록
+  createdClasses    Class[]
 }
 
 enum Role {
@@ -141,7 +142,8 @@ model Class {
   createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
   updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
 
-  ownerId    String //생성자 아이디
+  ownerId    String
+  owner      User          @relation(fields: [ownerId], references: [mainUserId]) // 클래스 소유자 (교사) 관계
   classUsers ClassToUser[] // 클래스에 속한 사용자 목록
   boards     Board[] // 클래스에 속한 게시판 목록
 }
@@ -171,8 +173,8 @@ model Board {
   updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
 
   ownerId String // 게시판 소유자 ID
-  owner   User   @relation(fields: [ownerId], references: [mainUserId ]) 
-  posts ClassPost[] // 게시판에 작성된 게시물 목록
+  owner   User        @relation(fields: [ownerId], references: [mainUserId])
+  posts   ClassPost[] // 게시판에 작성된 게시물 목록
 }
 
 model ClassPost {
