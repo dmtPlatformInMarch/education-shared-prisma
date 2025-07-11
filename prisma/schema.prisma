@@ -182,9 +182,10 @@ model ClassPost {
   boardId String // 게시판 ID
   board   Board  @relation(fields: [boardId], references: [boardId]) // 게시판과의 관계
 
-  title   String // 게시물 제목
-  content String // 게시물 내용
-  file   String?
+  title    String // 게시물 제목
+  content  String // 게시물 내용
+  file     String?
+  fileName String?
 
   createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
   updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
@@ -215,9 +216,10 @@ model OrganizationPost {
   postId         String @id @default(uuid()) // 게시물 고유 ID
   organizationId String // 조직 ID
 
-  title   String // 게시물 제목
-  content String // 게시물 내용
-  file    String?
+  title    String // 게시물 제목
+  content  String // 게시물 내용
+  file     String?
+  fileName String?
 
   createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
   updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
