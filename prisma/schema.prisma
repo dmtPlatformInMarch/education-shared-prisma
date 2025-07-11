@@ -184,6 +184,7 @@ model ClassPost {
 
   title   String // 게시물 제목
   content String // 게시물 내용
+  file   String?
 
   createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
   updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
@@ -216,6 +217,7 @@ model OrganizationPost {
 
   title   String // 게시물 제목
   content String // 게시물 내용
+  file    String?
 
   createdAt DateTime @default(now()) @db.Timestamptz(6) // 생성일
   updatedAt DateTime @default(now()) @db.Timestamptz(6) // 수정일
