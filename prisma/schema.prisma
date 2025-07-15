@@ -175,6 +175,8 @@ model Board {
   ownerId String // 게시판 소유자 ID
   owner   User        @relation(fields: [ownerId], references: [mainUserId])
   posts   ClassPost[] // 게시판에 작성된 게시물 목록
+
+  organizationId String // 조직 ID
 }
 
 model ClassPost {
@@ -196,6 +198,7 @@ model ClassPost {
   comments ClassPostComment[] // 게시물 댓글 목록
 
   classId String
+  organizationId String // 조직 ID
 }
 
 model ClassPostComment {
