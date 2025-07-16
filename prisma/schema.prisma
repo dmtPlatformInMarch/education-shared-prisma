@@ -38,6 +38,10 @@ model User {
   organizationPosts OrganizationPost[] // 조직 게시물 목록
   boards            Board[] // 사용자가 작성한 게시판 목록
   createdClasses    Class[]
+  schedules          SlotConfig[] 
+  // 👇 Define both roles for time slots
+  teacherTimeSlots  TimeSlot[]         @relation("TeacherTimeSlots")
+  clientTimeSlots   TimeSlot[]         @relation("ClientTimeSlots")
 }
 
 enum Role {
@@ -233,7 +237,8 @@ model OrganizationPost {
 
 model SlotConfig {
   slotConfigId String     @id @default(uuid()) // 
-  counselorId  String // 상담자 ID
+  teacherId  String // 상담자 ID
+  teacher    User       @relation(fields: [teacherId], references: [mainUserId]) // 상담자와의 관계
   startTime    DateTime // 시작 시간
   endTime      DateTime // 종료 시간
   recurring    Int        @default(1) // 요일 반복 기간 설정
@@ -244,12 +249,18 @@ model TimeSlot {
   requestId    String     @id @default(uuid()) // 요청 ID
   slotConfigId String //시간 설정 ID
   slotConfig   SlotConfig @relation(fields: [slotConfigId], references: [slotConfigId])
+
   startTime    DateTime // 슬롯 시작 시간
   endTime      DateTime // 슬롯 종료 시간
+  date         DateTime // 🟢 The actual date (e.g. 2025-07-15)
 
-  counselorId String // 상담자 ID
-  clientId    String // 내담자 ID
+  teacherId    String
+  teacher      User       @relation("TeacherTimeSlots", fields: [teacherId], references: [mainUserId])
 
+  clientId     String
+  client       User       @relation("ClientTimeSlots", fields: [clientId], references: [mainUserId])
+
+  
   status    SlotRequestStatus // 요청 상태
   createdAt DateTime          @default(now())
   updatedAt DateTime          @default(now())
