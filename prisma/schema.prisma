@@ -239,8 +239,8 @@ model SlotConfig {
   slotConfigId String     @id @default(uuid()) // 
   teacherId  String // 상담자 ID
   teacher    User       @relation(fields: [teacherId], references: [mainUserId]) // 상담자와의 관계
-  startTime    DateTime // 시작 시간
-  endTime      DateTime // 종료 시간
+  startTime    String // 시작 시간
+  endTime      String // 종료 시간
   recurring    Int        @default(1) // 요일 반복 기간 설정
   TimeSlots    TimeSlot[]
 }
@@ -250,8 +250,8 @@ model TimeSlot {
   slotConfigId String //시간 설정 ID
   slotConfig   SlotConfig @relation(fields: [slotConfigId], references: [slotConfigId])
 
-  startTime    DateTime // 슬롯 시작 시간
-  endTime      DateTime // 슬롯 종료 시간
+  startTime    String // 슬롯 시작 시간
+  endTime      String // 슬롯 종료 시간
   date         DateTime // 🟢 The actual date (e.g. 2025-07-15)
 
   teacherId    String
