@@ -38,10 +38,10 @@ model User {
   organizationPosts OrganizationPost[] // 조직 게시물 목록
   boards            Board[] // 사용자가 작성한 게시판 목록
   createdClasses    Class[]
-  schedules          SlotConfig[] 
+  schedules         SlotConfig[]
   // 👇 Define both roles for time slots
-  teacherTimeSlots  TimeSlot[]         @relation("TeacherTimeSlots")
-  clientTimeSlots   TimeSlot[]         @relation("ClientTimeSlots")
+  teacherTimeSlots  TimeSlot[]           @relation("TeacherTimeSlots")
+  clientTimeSlots   TimeSlot[]           @relation("ClientTimeSlots")
 }
 
 enum Role {
@@ -167,6 +167,7 @@ model ClassToUser {
 
 model Board {
   boardId     String            @id @default(uuid()) // 게시판 고유 ID
+  boardType   String // 게시판 유형 (예: 공지사항, 자유게시판 등)
   classId     String // 클래스 ID
   class       Class             @relation(fields: [classId], references: [classId]) // 클래스와의 관계
   title       String // 게시판 제목
@@ -201,7 +202,7 @@ model ClassPost {
 
   comments ClassPostComment[] // 게시물 댓글 목록
 
-  classId String
+  classId        String
   organizationId String // 조직 ID
 }
 
@@ -237,8 +238,8 @@ model OrganizationPost {
 
 model SlotConfig {
   slotConfigId String     @id @default(uuid()) // 
-  teacherId  String // 상담자 ID
-  teacher    User       @relation(fields: [teacherId], references: [mainUserId]) // 상담자와의 관계
+  teacherId    String // 상담자 ID
+  teacher      User       @relation(fields: [teacherId], references: [mainUserId]) // 상담자와의 관계
   startTime    String // 시작 시간
   endTime      String // 종료 시간
   recurring    Int        @default(1) // 요일 반복 기간 설정
@@ -250,17 +251,16 @@ model TimeSlot {
   slotConfigId String //시간 설정 ID
   slotConfig   SlotConfig @relation(fields: [slotConfigId], references: [slotConfigId])
 
-  startTime    String // 슬롯 시작 시간
-  endTime      String // 슬롯 종료 시간
-  date         DateTime // 🟢 The actual date (e.g. 2025-07-15)
+  startTime String // 슬롯 시작 시간
+  endTime   String // 슬롯 종료 시간
+  date      DateTime // 🟢 The actual date (e.g. 2025-07-15)
 
-  teacherId    String
-  teacher      User       @relation("TeacherTimeSlots", fields: [teacherId], references: [mainUserId])
+  teacherId String
+  teacher   User   @relation("TeacherTimeSlots", fields: [teacherId], references: [mainUserId])
 
-  clientId     String
-  client       User       @relation("ClientTimeSlots", fields: [clientId], references: [mainUserId])
+  clientId String
+  client   User   @relation("ClientTimeSlots", fields: [clientId], references: [mainUserId])
 
-  
   status    SlotRequestStatus // 요청 상태
   createdAt DateTime          @default(now())
   updatedAt DateTime          @default(now())
