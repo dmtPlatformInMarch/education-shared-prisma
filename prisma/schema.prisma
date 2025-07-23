@@ -25,6 +25,7 @@ model User {
 
   code     String? @unique // 사용자 코드 (선택 사항)
   settings Json // 사용자 설정 (JSON 형식으로 저장)
+  avatar   String? // 사용자 아바타 이미지 URL
 
   role Role
 
