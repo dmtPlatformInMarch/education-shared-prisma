@@ -53,6 +53,7 @@ enum Role {
   TEACHER
   ADMIN
   PARENT
+  UNDEFINED
 }
 
 enum Plan {
