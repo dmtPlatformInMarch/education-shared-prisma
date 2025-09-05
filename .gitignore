@@ -39,3 +39,6 @@ coverage/
 # Temporary files
 tmp/
 temp/
+.env.dev
+.env.local
+.env*
