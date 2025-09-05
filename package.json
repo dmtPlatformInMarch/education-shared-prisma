@@ -5,7 +5,18 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio",
+    "migrate:dev": "prisma migrate dev",
+    "migrate:deploy": "prisma migrate deploy",
+    "migrate:reset": "prisma migrate reset",
+    "db:push": "prisma db push",
+    "db:pull": "prisma db pull",
+    "seed": "ts-node prisma/seed.ts",
+    "env:local": "cp .env.local .env && echo '✅ Switched to local environment'",
+    "env:dev": "cp .env.dev .env && echo '✅ Switched to dev environment'",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.7",
