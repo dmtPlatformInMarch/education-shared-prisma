@@ -115,7 +115,7 @@ export class UserService {
 
 #### User (사용자)
 - 모든 사용자 정보 관리
-- Role: STUDENT_CHILD, STUDENT, TEACHER, ADMIN, PARENT, UNDEFINED
+- Role: STUDENT_CHILD, STUDENT, TEACHER, ADMIN, ADMIN_WAITING, PARENT, UNDEFINED
 - Plan: FREE, STANDARD, PREMIUM
 
 #### Organization (조직)

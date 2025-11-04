@@ -52,6 +52,7 @@ enum Role {
   STUDENT //만 14세 이상
   TEACHER
   ADMIN
+  ADMIN_WAITING // 관리자 권한 승인 대기중
   PARENT
   UNDEFINED
 }
