@@ -55,7 +55,6 @@ enum Role {
   ADMIN_WAITING // 관리자 권한 승인 대기중
   PARENT
   UNDEFINED
-  TEST
 }
 
 enum Plan {
